@@ -1,96 +1,121 @@
-# StyleMart-Web — Fashion E-Commerce Website (Java / JSP / Servlet)
+# StyleMart — Fashion E-Commerce Web Application
 
-## Phase 1 — what's included
+StyleMart is a full-stack fashion e-commerce platform built with **Java, JSP, and Servlets**, backed by a **MySQL** database. It covers the complete shopping flow — from browsing products to placing and tracking an order — plus an admin dashboard for managing the catalog.
+
+---
+
+## Features
+
+### Customer-facing
+- **Authentication** — registration with email OTP verification, login, session-based auth, password hashing (BCrypt)
+- **Product catalog** — category browsing (Men / Women / Kids / Footwear), search, filters (brand, size, price range), sorting
+- **Product details** — image gallery with zoom, size/color selection, ratings
+- **Cart** — add/update/remove items, live order summary, coupon codes, GST and delivery calculation
+- **Wishlist**
+- **Checkout** — address book (multiple saved addresses, default address), payment method selection
+- **Orders** — order placement, order history, order tracking timeline, cancel/return requests
+- **Payments** — simulated payment flow (success/failure pages)
+- **Static pages** — About Us, Contact Us, FAQ, Privacy Policy, Returns Policy
+
+### Admin
+- Admin login (separate from customer accounts)
+- Product management — add/edit products, upload main image and gallery images, activate/deactivate
+- Dashboard overview of the catalog
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Java (Jakarta Servlet / JSP) |
+| Server | Apache Tomcat 10.1+ |
+| Database | MySQL (via XAMPP or standalone) |
+| Build tool | Maven |
+| Frontend | JSP, HTML, CSS, vanilla JavaScript, Bootstrap 5 |
+| Security | BCrypt password hashing, prepared statements (SQL-injection safe), session-based auth filter |
+
+---
+
+## Project Structure
 
 ```
 StyleMart-Web/
-├── pom.xml                              # Maven config: servlet/JSP/JSTL, MySQL driver, jBCrypt, Gson
+├── pom.xml                          # Maven build configuration
 ├── database/
-│   └── stylemart_web.sql                # 13 tables + FKs + constraints + sample data
-├── src/main/resources/
-│   └── db.properties                    # JDBC connection settings (XAMPP defaults)
+│   ├── stylemart_web.sql            # Full schema + sample data
+│   └── migrations/                  # Incremental schema updates
+├── deploy/
+│   └── stylemart-web-context.xml    # Tomcat context config for external image storage
 └── src/main/
+    ├── resources/
+    │   ├── db.properties             # Database connection settings
+    │   └── mail.properties           # SMTP settings for OTP emails
     ├── java/com/stylemart/
-    │   ├── util/DBConnection.java       # JDBC connection helper
-    │   ├── util/PasswordUtil.java       # BCrypt hashing
-    │   ├── model/User.java, Product.java
-    │   ├── dao/UserDAO.java, ProductDAO.java   # prepared statements only
-    │   ├── service/AuthService.java     # business logic layer
-    │   └── controller/
-    │       ├── AuthFilter.java          # session guard for /account/*, /admin/*
-    │       ├── LoginServlet.java
-    │       ├── RegisterServlet.java
-    │       ├── VerifyOtpServlet.java
-    │       └── TrendingProductsServlet.java   # JSON API consumed by main.js
+    │   ├── controller/               # Servlets (one per feature area)
+    │   ├── dao/                      # Data-access layer (PreparedStatement only)
+    │   ├── model/                    # Plain data classes
+    │   ├── service/                  # Business logic (e.g. AuthService)
+    │   ├── util/                     # Helpers (pricing, file upload, password hashing, email)
+    │   └── listener/                 # App startup listener
     └── webapp/
-        ├── WEB-INF/web.xml
-        ├── WEB-INF/views/partials/navbar.jspf, footer.jspf
-        ├── WEB-INF/views/error/404.jsp, 500.jsp
-        ├── index.jsp, login.jsp, register.jsp, verify-otp.jsp
-        └── assets/css/style.css, auth.css
-        └── assets/js/main.js
+        ├── WEB-INF/views/            # JSP views (account pages, admin panel, product listing/details)
+        ├── assets/
+        │   ├── css/                  # style.css, auth.css
+        │   ├── js/                   # main.js
+        │   └── img/products/         # Product images
+        └── *.jsp                     # Top-level pages (home, cart, checkout, login, etc.)
 ```
 
-## Phase 4 — what's included
+---
 
+## Getting Started (Local Setup)
+
+### Prerequisites
+- JDK 17+
+- Maven
+- Apache Tomcat 10.1+
+- MySQL (e.g. via XAMPP)
+
+### 1. Database
+1. Start MySQL (via XAMPP or your preferred method).
+2. Open phpMyAdmin and create a database.
+3. Import `database/stylemart_web.sql`, then apply any files in `database/migrations/` in order.
+4. Update `src/main/resources/db.properties` with your database name, username, and password.
+
+### 2. Build
+```bash
+mvn clean package
 ```
-src/main/
-├── java/com/stylemart/
-│   ├── model/Address.java, Coupon.java, Order.java, OrderItem.java, OrderSummary.java
-│   ├── dao/AddressDAO.java     # CRUD + default-address handling (one default per user, enforced)
-│   ├── dao/CouponDAO.java      # lookup by code/id
-│   ├── dao/OrderDAO.java       # transactional placement (stock re-check + decrement, cart clear,
-│   │                           #   payments row) + history/detail/cancel/return
-│   ├── util/PricingUtil.java   # single source of truth for subtotal → discount → GST → delivery → total
-│   └── controller/
-│       ├── CartServlet.java        # extended: /cart/coupon/apply, /cart/coupon/remove
-│       ├── CheckoutServlet.java    # /checkout, /checkout/place
-│       ├── AddressServlet.java     # /account/addresses (+ /save, /delete, /default)
-│       └── OrderServlet.java       # /account/orders (+ /view, /cancel, /return) — replaces the Phase 3 placeholder
-└── webapp/
-    ├── cart.jsp             # updated: coupon box, live AJAX summary (subtotal/discount/GST/delivery/total)
-    ├── checkout.jsp         # address picker, payment method, final order summary, place order
-    └── WEB-INF/views/account/
-        ├── addresses.jsp    # address book list + add/edit form
-        ├── orders.jsp       # order history
-        └── order-detail.jsp # order detail, visual tracking timeline, cancel/return actions
+This produces `target/stylemart-web.war`.
+
+### 3. Deploy
+Copy the WAR file into Tomcat's `webapps/` folder:
+```bash
+copy target\stylemart-web.war C:\path\to\tomcat\webapps\stylemart-web.war
+```
+Start Tomcat, then visit:
+```
+http://localhost:8080/stylemart-web/
 ```
 
-**Pricing model** (`PricingUtil`, simplified for this project — real GST/shipping would come from tax slabs and a carrier API):
-- GST: flat 5% on `(subtotal − coupon discount)`
-- Delivery: ₹79, free at/above ₹999 subtotal
-- Coupons: `flat` or `percent` (with optional max-discount cap), gated by `min_order_value` and validity dates; re-validated against the live cart on every read so a coupon silently drops if the cart no longer qualifies
+### 4. Product image storage (recommended)
+By default, images uploaded through the admin panel are written to a folder outside the deployed webapp (so they survive future rebuilds/redeploys). To enable this, copy `deploy/stylemart-web-context.xml` into:
+```
+<tomcat>/conf/Catalina/localhost/stylemart-web.xml
+```
+This maps `${user.home}/stylemart-uploads/products` to the app's `/assets/img/products` URL path — create that folder if it doesn't already exist.
 
-**Order lifecycle**: `placed → accepted → shipped → delivered`, with `cancelled` (only while `placed`/`accepted`, restocks items) and `returned` (only once `delivered`) as terminal side-branches. Placement is one DB transaction — order + order_items + payments + stock decrement + cart clear all succeed or all roll back, with a row-level `FOR UPDATE` stock check to prevent overselling on concurrent checkouts.
+---
 
-## Not yet wired (fair to flag)
+## Notes
 
-- Online payment is simulated (`payment_status` flips straight to `paid`) — no real gateway integration
-- Order status transitions `accepted → shipped → delivered` are DB-only for now; they'll get admin-panel controls in Phase 5
-- `/account/profile` is still the Phase 3 placeholder — profile editing wasn't in the Phase 4 scope
+- OTP emails are sent via the settings in `mail.properties` — configure a real SMTP account for this to work end-to-end.
+- Online payment is simulated for demonstration purposes; no real payment gateway is integrated.
+- All SQL queries use `PreparedStatement` to prevent SQL injection.
 
+---
 
+## License
 
-1. **Database**: start MySQL in XAMPP, open phpMyAdmin, import `database/stylemart_web.sql`.
-2. **Build**: `mvn clean package` — produces `target/stylemart-web.war`.
-3. **Deploy**: drop the WAR into Tomcat 10's `webapps/` folder (Tomcat 10 uses the Jakarta `jakarta.servlet.*` namespace, which is why `web.xml` and the dependencies target that, not the older `javax.servlet.*`).
-4. Visit `http://localhost:8080/stylemart-web/` — home page loads, trending products populate via AJAX from `/api/products/trending` once the DB is seeded.
-5. Before anything beyond local testing: change nothing is hardcoded as a secret here, but wire `AuthService.register()` to a real SMTP mailer (JavaMail) instead of `System.out.println` for the OTP.
-
-## Design notes
-
-- **DAO pattern**: all SQL lives in `dao/`, always via `PreparedStatement` — no string-concatenated queries anywhere (SQL-injection protection).
-- **Service layer**: `AuthService` sits between servlets and DAOs, holds validation/business rules, throws a typed `AuthException` servlets translate into user-facing messages.
-- **Session auth**: `AuthFilter` blocks `/account/*` and `/admin/*` for anyone without `session.userId`; admin routes additionally require `role=admin`.
-- **XSS**: JSPs currently only echo server-controlled or already-validated values; once product/review content (user-generated text) is rendered, use JSTL `<c:out>` or `fn:escapeXml` rather than raw `<%= %>` scriptlets.
-
-## Roadmap (matches the phases you specified)
-
-- ✅ **Phase 1** — folder structure, database, Maven setup, JDBC, base JSP/CSS/JS, servlet config
-- ✅ **Phase 2** — Authentication module
-- ✅ **Phase 3** — Home page data wiring, full product listing + detail pages, live search, filters
-- ✅ **Phase 4** — Wishlist, cart (add/update/remove, coupon, GST, delivery), checkout, address management, order placement/history/tracking/cancel/return *(this delivery)*
-- **Phase 5** — Admin panel: dashboard, product/category/order/user management, coupons/offers, reports
-- **Phase 6** — Final UI polish, dark mode toggle wiring, testing, deployment guide
-
-Tell me which phase to build next.
+This project is for educational/portfolio purposes.
