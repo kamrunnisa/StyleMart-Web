@@ -1,0 +1,36 @@
+<footer class="site-footer">
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <h5>StyleMart</h5>
+                <p class="text-muted small">Fashion, delivered to your doorstep.</p>
+            </div>
+            <div class="col-md-3">
+                <h6>Company</h6>
+                <ul class="list-unstyled small">
+                    <li><a href="<%= request.getContextPath() %>/about-us.jsp">About Us</a></li>
+                    <li><a href="<%= request.getContextPath() %>/contact-us.jsp">Contact Us</a></li>
+                    <li><a href="<%= request.getContextPath() %>/privacy-policy.jsp">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6>Help</h6>
+                <ul class="list-unstyled small">
+                    <li><a href="<%= request.getContextPath() %>/faq.jsp">FAQ</a></li>
+                    <li><a href="<%= request.getContextPath() %>/account/orders">Track Order</a></li>
+                    <li><a href="<%= request.getContextPath() %>/returns-policy.jsp">Returns</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6>Follow Us</h6>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p class="text-center small text-muted mb-0">&copy; 2026 StyleMart. All rights reserved.</p>
+    </div>
+</footer>

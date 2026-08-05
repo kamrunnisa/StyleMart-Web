@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+
+.auth-body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #eef2fc, #f7f2e2);
+    font-family: 'Inter', sans-serif;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 40px 32px;
+    background: #fff;
+    border: 1px solid #e2e8f5;
+    border-top: 3px solid #d4af37;
+    border-radius: 10px;
+    box-shadow: 0 22px 50px rgba(20, 50, 143, 0.16);
+    animation: auth-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes auth-rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #14328f;
+    margin-bottom: 4px;
+}
+
+.password-field {
+    position: relative;
+}
+.password-field .form-control {
+    padding-right: 40px;
+    border-radius: 6px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.password-field .form-control:focus {
+    border-color: #d4af37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+}
+.password-field .toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.password-field .toggle-password:hover {
+    color: #14328f;
+}

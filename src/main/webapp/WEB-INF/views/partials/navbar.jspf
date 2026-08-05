@@ -1,0 +1,84 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="<%= request.getContextPath() %>/index.jsp">Style<span class="text-gradient">Mart</span></a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item dropdown mega-menu">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Men</a>
+                    <div class="dropdown-menu mega-menu-panel">
+                        <a class="dropdown-item" href="<%= request.getContextPath() %>/products?category=men&search=shirt">Shirts</a>
+                        <a class="dropdown-item" href="<%= request.getContextPath() %>/products?category=men&search=t-shirt">T-Shirts</a>
+                        <a class="dropdown-item" href="<%= request.getContextPath() %>/products?category=men&search=jeans">Jeans</a>
+                    </div>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/products?category=women">Women</a></li>
+                <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/products?category=kids">Kids</a></li>
+                <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/products?category=footwear">Footwear</a></li>
+                <li class="nav-item"><a class="nav-link" href="<%= request.getContextPath() %>/products?flag=flash_sale">Flash Sale</a></li>
+            </ul>
+
+            <form class="d-flex search-bar" action="<%= request.getContextPath() %>/products" method="get">
+                <input class="form-control" type="search" name="search" placeholder="Search for products, brands...">
+                <button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+
+            <%
+                Integer navUserId = (Integer) session.getAttribute("userId");
+                int navWishlistCount = 0;
+                int navCartCount = 0;
+                if (navUserId != null) {
+                    try {
+                        navWishlistCount = new com.stylemart.dao.WishlistDAO().getCount(navUserId);
+                        navCartCount = new com.stylemart.dao.CartDAO().getItemCount(navUserId);
+                    } catch (Exception ignored) {
+                        // Non-critical for nav rendering; badges just stay at 0 if this fails.
+                    }
+                }
+            %>
+            <div class="nav-icons d-flex align-items-center gap-3">
+                <a href="<%= request.getContextPath() %>/wishlist" title="Wishlist" class="position-relative">
+                    <i class="fa-regular fa-heart"></i>
+                    <% if (navWishlistCount > 0) { %>
+                        <span class="badge bg-danger rounded-pill position-absolute" style="top:-8px;right:-10px;font-size:0.6rem;"><%= navWishlistCount %></span>
+                    <% } %>
+                </a>
+                <a href="<%= request.getContextPath() %>/cart" title="Cart" class="position-relative">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <% if (navCartCount > 0) { %>
+                        <span class="badge bg-danger rounded-pill position-absolute" style="top:-8px;right:-10px;font-size:0.6rem;"><%= navCartCount %></span>
+                    <% } %>
+                </a>
+                <%
+                    Object userName = session.getAttribute("userName");
+                    if (userName != null) {
+                %>
+                    <div class="nav-item dropdown account-dropdown">
+                        <a href="#" class="dropdown-toggle" id="accountDropdown" data-bs-toggle="dropdown"
+                           aria-expanded="false" title="Account">
+                            <i class="fa-regular fa-user"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                            <li><span class="dropdown-item-text text-muted small">Hi, <%= userName %></span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="<%= request.getContextPath() %>/account/profile">My Account</a></li>
+                            <li><a class="dropdown-item" href="<%= request.getContextPath() %>/account/orders">My Orders</a></li>
+                            <li><a class="dropdown-item" href="<%= request.getContextPath() %>/account/addresses">My Addresses</a></li>
+                            <li><a class="dropdown-item" href="<%= request.getContextPath() %>/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                <%
+                    } else {
+                %>
+                    <a href="<%= request.getContextPath() %>/login.jsp" title="Login"><i class="fa-regular fa-user"></i></a>
+                <%
+                    }
+                %>
+            </div>
+        </div>
+    </div>
+</nav>
