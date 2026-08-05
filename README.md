@@ -92,5 +92,3 @@ src/main/
 - ✅ **Phase 4** — Wishlist, cart (add/update/remove, coupon, GST, delivery), checkout, address management, order placement/history/tracking/cancel/return *(this delivery)*
 - **Phase 5** — Admin panel: dashboard, product/category/order/user management, coupons/offers, reports
 - **Phase 6** — Final UI polish, dark mode toggle wiring, testing, deployment guide
-
-Tell me which phase to build next.
